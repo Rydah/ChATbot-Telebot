@@ -54,13 +54,14 @@ document.addEventListener("DOMContentLoaded", function() {
                         chatBox.appendChild(p)
                     }
                 });
+                chatBox.scrollTop = chatBox.scrollHeight;
             })
             .catch(error => {
                 console.error("Error", error);
             });
     }
 
-    function sendMessage(message) { // send data over to python side
+    function sendMessage(message) {
         fetch('/api/call-python', {
             method: 'POST',
             headers: {
@@ -68,7 +69,7 @@ document.addEventListener("DOMContentLoaded", function() {
             },
             body: JSON.stringify({ message })
         })
-        .then(data => {
+        .then(() => {
             updateChatLog() // update chat log to show new messages
         })
         .catch(error => {
