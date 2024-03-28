@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 chatBox.innerHTML = "" // reset chatbox to no messages
                 data.chat_log.forEach(message => {
                     // if content as https, it is a image url from CatAPI
-                    if (message.role === "assistant" && message.content.startsWith("https")) {
+                    if (message.content.endsWith(".gif") || message.content.endsWith(".jpg") || message.content.endsWith(".png")) {
                         const container = document.createElement("div")
                         container.classList.add("chat-message")
 
@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         img.classList.add("chat-image")
 
                         const p = document.createElement("p")
-                        p.textContent = `${message.role}:`
+                        p.textContent = `assistant:`
 
                         container.appendChild(p)
                         container.appendChild(img);
