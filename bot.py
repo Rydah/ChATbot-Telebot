@@ -29,14 +29,16 @@ def get_cat_image(): # call CatAPI and request for the url
 def get_cat_breed_image(breed):
     url = "https://api.thecatapi.com/v1/breeds"
     response = requests.get(url)
+    breed_id = None
     if response.status_code == 200:
         breeds = response.json()
         for line in breeds:
             if breed.lower() == line['name'].lower():
                 breed_id = line['id']
+    if breed_id is None:
+        return "The breed you looking for does not exist :("
     response = requests.get(f"https://api.thecatapi.com/v1/images/search?breed_ids={breed_id}", headers={"x-api-key": CATAPI_KEY})
     if response.status_code == 200:
-        print(response.json())
         return response.json()[0]['url']
     else:
         return None
@@ -55,11 +57,11 @@ def get_breed_id(message):
 # Define a command handler
 @bot.message_handler(commands=['start', 'help'])
 def send_welcome(message):
-    bot.reply_to(message, "Welcome to YourBot! Type /info to get more information.")
+    bot.reply_to(message, "Welcome to Cat ChatBot! Type /info to get more information. I will provide any amount of cat pictures you desire")
 
 @bot.message_handler(commands=['info'])
 def send_info(message):
-    bot.reply_to(message, "This is a simple Telegram bot implemented in Python.")
+    bot.reply_to(message, "Just simply ask me for cat pictures and their breeds and I will send it to you (:")
 
 @bot.message_handler(commands=['clear'])
 def clear_message(message):
@@ -71,6 +73,7 @@ def clear_message(message):
 @bot.message_handler(func=lambda message: True)
 def echo_all(message):
     global chat_log
+    print(message.from_user.id)
     tools = [
         {
             "type": "function",
@@ -134,6 +137,8 @@ def echo_all(message):
                     }
                 )
                 bot.reply_to(message, function_response)
+                if function_response == "The breed you looking for does not exist :(":
+                    break
             else:
                 chat_log.append(
                     {
